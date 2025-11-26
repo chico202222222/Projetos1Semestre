@@ -1,0 +1,140 @@
+import random
+
+
+# MATRIZ DE RESULTADOS
+# 0 = empate | 1 = vitória do jogador 1 | 2 = vitória do jogador 2
+
+RESULTADOS = [
+    [0, 2, 1],  # Pedra
+    [1, 0, 2],  # Papel
+    [2, 1, 0]  # Tesoura
+]
+
+
+# FUNÇÕES BASE - uso de tres aspas para geração de doc string das funções
+# jog1 e jog2 se refere as jogadas dos jogadores representados por nomes registrados pelos jogadores ou pelo CPU
+
+def obter_resultado(jog1, jog2):
+    """Retorna o resultado da rodada usando a matriz."""
+    return RESULTADOS[jog1 - 1][jog2 - 1] # subtração para que se leve em conta o índice, não o valor atribuido a cada jogada
+
+
+def jogar_rodada(nome1, jog1, nome2, jog2, placar):
+    """Executa uma rodada e atualiza o placar."""
+    jogadas = {1: "Pedra", 2: "Papel", 3: "Tesoura"}
+    print(f"\n{nome1} jogou: {jogadas[jog1]}")
+    print(f"{nome2} jogou: {jogadas[jog2]}")
+
+    resultado = obter_resultado(jog1, jog2)
+
+    if resultado == 0:
+        print("Empate!")
+    elif resultado == 1:
+        print(f"O vencedor é {nome1}!")
+        placar[nome1] += 1
+    else:
+        print(f"O vencedor é {nome2}!")
+        placar[nome2] += 1
+
+
+def continuar_jogo():
+    """Pergunta se o usuário quer continuar jogando."""
+    opcao = input("Deseja continuar? (S/N): ").capitalize()
+    return opcao == "S"
+
+
+def mostrar_placar(placar):
+    print("\nPlacar atual:")
+    for nome, pontos in placar.items():
+        print(f"{nome}: {pontos} ponto(s)")
+
+
+# --- MODOS DE JOGO ---
+def jogador_vs_jogador():
+    nome1 = input("Digite o nome do Jogador 1: ")
+    nome2 = input("Digite o nome do Jogador 2: ")
+    placar = {nome1: 0, nome2: 0}
+
+    i = True
+
+    while i:
+        print("\nEscolha sua jogada: (1) Pedra, (2) Papel, (3) Tesoura")
+        jogada1 = int(input(f"{nome1}, escolha: "))
+        jogada2 = int(input(f"{nome2}, escolha: "))
+
+        jogar_rodada(nome1, jogada1, nome2, jogada2, placar)
+        mostrar_placar(placar)
+
+        if not continuar_jogo():
+            i = False
+
+    print("\nFim do jogo!")
+    mostrar_placar(placar)
+
+
+def jogador_vs_computador():
+    nome = input("Digite seu nome: ")
+    bot = "Bot A"
+    placar = {nome: 0, bot: 0}
+
+    i = True
+
+    while i:
+        print("\nEscolha sua jogada: (1) Pedra, (2) Papel, (3) Tesoura")
+        jog = int(input(f"{nome}, escolha: "))
+        jog_bot = random.randint(1, 3)
+
+        jogar_rodada(nome, jog, bot, jog_bot, placar)
+        mostrar_placar(placar)
+
+        if not continuar_jogo():
+            i = False
+
+    print("\nFim do jogo!")
+    mostrar_placar(placar)
+
+
+def computador_vs_computador():
+    bot1 = "Bot A"
+    bot2 = "Bot B"
+    placar = {bot1: 0, bot2: 0}
+
+    i = True
+
+    while i:
+        jog1 = random.randint(1, 3)
+        jog2 = random.randint(1, 3)
+
+        jogar_rodada(bot1, jog1, bot2, jog2, placar)
+        mostrar_placar(placar)
+
+        if not continuar_jogo():
+            i = False
+
+    print("\nFim do jogo!")
+    mostrar_placar(placar)
+
+
+# FUNÇÃO PRINCIPAL DO JOGO!!!!
+def main():
+    print("Bem-vindo ao Jokempô!")
+    print("(1) Jogador vs Jogador")
+    print("(2) Jogador vs Computador")
+    print("(3) Computador vs Computador")
+
+    opcao = int(input("Escolha o modo de jogo: "))
+
+    if opcao == 1:
+        jogador_vs_jogador()
+    elif opcao == 2:
+        jogador_vs_computador()
+    elif opcao == 3:
+        computador_vs_computador()
+    else:
+        print("Opção inválida!")
+
+
+#usando a recursividade, desmembramos o jogo em diferentes funções hierárquicas que realizam os cálculos partindo da função principal
+#"main()" não retorna nada a fim de gerar apenas a interação inicial que, ao final, vai retornar, por si só, placar de vitórias
+
+main()
